@@ -3,7 +3,6 @@
 		<img src="./docs/img/logo-words.png" width="300">
 	</a>
 </p>
-<br/>
 
 # EOS Token Sale Contract
 
@@ -21,7 +20,7 @@ These contracts are intended to support a decentralized Token Sale platform, whi
 
 The token sale platform is a decentralized application based on open-source smart contracts that any project can use to sell its tokens.
 
-The Web Application repository these smart contracts are designed for can be found at the [EOS Token Sale Platform GitHub Repo].(https://github.com/eostarter/eostarter.sale-smart-contract)
+The Web Application repository these smart contracts are designed for can be found at the [EOS Token Sale Platform GitHub Repo](https://github.com/eostarter/eostarter.sale-smart-contract)
 
 
 ## Smart Contract Accounts 
