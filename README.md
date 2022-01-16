@@ -30,6 +30,7 @@ The Web Application repository these smart contracts are designed for can be fou
 - Application Backend Service
 
 
+### User Flow
 1. A token contract generator will provide project owners with a copy of the `eosio.token` contract 
 1. Project owner deploys contract , created and issues tokens.
 1. Project Owner Creates a pool and sets parameters
