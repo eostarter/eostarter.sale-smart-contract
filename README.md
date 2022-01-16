@@ -22,6 +22,49 @@ The token sale platform is a decentralized application based on open-source smar
 
 The Web Application repository these smart contracts are designed for can be found at the [EOS Token Sale Platform GitHub Repo](https://github.com/eostarter/eostarter.sale-smart-contract)
 
+## Situation and Approach
+
+### User Roles
+- Project Owner 
+- Investor 
+- Application Backend Service
+
+
+1. A token contract generator will provide project owners with a copy of the `eosio.token` contract 
+1. Project owner deploys contract , created and issues tokens.
+1. Project Owner Creates a pool and sets parameters
+1. Application Backend Service approves pool
+1. Project Owner deposits token to smart contract
+1. Token sale goes live
+
+1. Investor applies for project pool 
+1. Application Backend Service whitelists investor account
+1. Investor must agree to terms
+1. Investor deposits EOS 
+1. Investor receives equivalent amount in project tokens
+
+## Data Model
+
+<p align="center">
+	<img src="./docs/img/data-model.png" >
+</p>
+
+## Smart Contract Actions 
+
+| User Role | Action | Description | Pre-Conditions | Post-Conditions |
+|---|---|---|---|---|
+| Project Owner | addpool | create a new pool | Account must exist and be verified | pool is enabled | pool is enabled 
+| Project Owner | deposit | deposit tokens to pool | withdraw EOS tokens from pool | pool must exist | pool is funded
+| Project Owner | claimfunds  | withdraw EOS tokens from pool | pool must exist and vesting schedule met | project is funded   |
+|  |   |   |   |   |
+| Investor | subscribe | Apply to a pool | Investor must be qualified and agree to terms | User is subscribed to a pool |
+| Investor | contribute  | Contribute to a pool  | Pool must exist and user is verified | User can invest in a pool |
+| Investor | claim  | Claim project tokens from a pool | Account must have contributed | User no longer has tokens in pool |
+|  |   |   |   |   |
+| App Backend  | approve | approve a pool | pool must comply with requirements | pool is enabled  |
+| App Backend  | disable | disable a pool | pool must exist | pool is disabled  |
+| App Backend  | whitelist | add account to whitelist | account must exist and comply with requirements | user appears on whitelist 
+| App Backend | blacklist | add account to blacklist | account must exist | user removed from whitelist   |
 
 ## Smart Contract Accounts 
 
