@@ -10,7 +10,7 @@
 
 EOStarter is developing a Token Sale Smart Contract system that allows for the crowd-sourcing of projects through a token sale that can be configured with different parameters like staking capabilities, whitelisting requirements, token vesting, etc.
 
-You can read about the full specs of these  Smart Contracts here:
+You can read about the initial specs of the Smart Contract here:
 
 [TOKENSALE PLATFORM - SCOPE OF WORK](https://medium.com/eostarter/eostarter-tokensale-platform-scope-of-work-4cb153c33ab6)
 
@@ -18,31 +18,38 @@ You can read about the full specs of these  Smart Contracts here:
 # Project Description
 These contracts are intended to support a decentralized Token Sale platform, which allows users to set up a token sale, determine the token sale parameters, and deploy their sale onto the EOS Mainnet.
 
-The token sale platform is a decentralized application based on open-source smart contracts that any project can use to sell its tokens.
+The token sale platform is a decentralized application based on an open-source smart contract that any project can use to sell its tokens.
 
-The Web Application repository these smart contracts are designed for can be found at the [EOS Token Sale Platform GitHub Repo](https://github.com/eostarter/eostarter.sale-smart-contract)
+The Web Application repository can be found at the [EOS Token Sale Platform GitHub Repo](https://github.com/eostarter/eostarter.sale-smart-contract)
 
 ## Situation and Approach
 
-### User Roles
-- Project Owner 
-- Investor 
-- Application Backend Service
+The system requires a project admin , users can can deploy their own token sale contract and assume the admin role or they can use the original contract managed by EOStarter.
 
+Users must deploy and issue their own tokens , EOStater will not have access to token issuance or keys controlling project tokens.
 
 ### User Flow
-1. A token contract generator will provide project owners with a copy of the `eosio.token` contract 
-1. Project owner deploys contract , created and issues tokens.
-1. Project Owner Creates a pool and sets parameters
-1. Application Backend Service approves pool
-1. Project Owner deposits token to smart contract
-1. Token sale goes live
 
-1. Investor applies for project pool 
-1. Application Backend Service whitelists investor account
-1. Investor must agree to terms
-1. Investor deposits EOS 
-1. Investor receives equivalent amount in project tokens
+#### User Roles
+- Project Owner 
+- Investor 
+- Application Administrator
+
+#### Project Owner
+1. A token contract generator will provide project owners with a copy of the `eosio.token` contract .
+1. Project owner deploys contract using an account they create and control.
+1. Project owner creates and issues their project tokens.
+1. Project Owner Creates a pool and sets parameters.
+1. Application Admin reviews and approves pool.
+1. Project Owner deposits token to smart contract.
+1. Application Admin reviews and enables token sale.
+
+#### Investor
+1. Investor applies for project pool.
+1. Application Backend Service whitelists investor account.
+1. Investor agrees to terms.
+1. Investor project purchases tokens with EOS.
+1. Investor receives equivalent amount in project tokens.
 
 ## Data Model
 
@@ -54,18 +61,21 @@ The Web Application repository these smart contracts are designed for can be fou
 
 | User Role | Action | Description | Pre-Conditions | Post-Conditions |
 |---|---|---|---|---|
-| Project Owner | addpool | create a new pool | Account must exist and be verified | pool is enabled | pool is enabled 
-| Project Owner | deposit | deposit tokens to pool | withdraw EOS tokens from pool | pool must exist | pool is funded
-| Project Owner | claimfunds  | withdraw EOS tokens from pool | pool must exist and vesting schedule met | project is funded   |
+| Project Owner | addpool | create a new pool | Account must exist and be verified | pool is pending approval
+| Project Owner | deposit | deposit project tokens to pool | pool must be approved | pool can be enabled | pool is funded |
+| Project Owner | claimfunds  | withdraw EOS tokens from pool | pool must have funds and vesting schedule met | project is funded |
 |  |   |   |   |   |
 | Investor | subscribe | Apply to a pool | Investor must be qualified and agree to terms | User is subscribed to a pool |
 | Investor | contribute  | Contribute to a pool  | Pool must exist and user is verified | User can invest in a pool |
 | Investor | claim  | Claim project tokens from a pool | Account must have contributed | User no longer has tokens in pool |
 |  |   |   |   |   |
-| App Backend  | approve | approve a pool | pool must comply with requirements | pool is enabled  |
-| App Backend  | disable | disable a pool | pool must exist | pool is disabled  |
-| App Backend  | whitelist | add account to whitelist | account must exist and comply with requirements | user appears on whitelist 
-| App Backend | blacklist | add account to blacklist | account must exist | user removed from whitelist   |
+| App Admin  | approve | approve a pool | pool must comply with requirements | pool is enabled  |
+| App Admin  | reject | reject a pool | pool must exist | pool is rejected  |
+| App Admin  | enable | enable a pool | pool must comply with requirements | pool is ready to be funded  |
+| App Admin  | disable | disable a pool | pool must exist | pool is rejected  |
+| App Admin  | whitelist | add account to whitelist | account must exist and comply with requirements | user appears on whitelist  |
+| App Admin | blacklist | add account to blacklist | account must exist | user removed from whitelist |
+
 
 ## Smart Contract Accounts 
 
