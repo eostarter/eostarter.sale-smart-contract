@@ -45,8 +45,8 @@ Users must deploy and issue their own tokens , EOStater will not have access to 
 1. Application Admin reviews and enables token sale.
 
 #### Investor
-1. Investor applies for project pool.
-1. Application Backend Service whitelists investor account.
+1. Investor applies to participate in a project pool.
+1. Application Admin reviews and whitelists investor account.
 1. Investor agrees to terms.
 1. Investor project purchases tokens with EOS.
 1. Investor receives equivalent amount in project tokens.
