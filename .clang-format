@@ -1,0 +1,13 @@
+---
+# We'll use defaults from the Microsoft style,
+# but with some changes to follow indentation of
+# https://github.com/EOSIO/eosio.contracts/blob/master/contracts/eosio.token/src/eosio.token.cpp
+BasedOnStyle: Microsoft
+AlignConsecutiveDeclarations: Consecutive
+SpacesInParentheses: true
+SpacesInAngles: true
+BinPackArguments: false
+BinPackParameters: false
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+---
