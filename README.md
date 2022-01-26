@@ -69,7 +69,7 @@ Users must deploy and issue their own tokens , EOStater will not have access to 
 | Investor | contribute  | Contribute to a pool  | Pool must exist and user is verified | User can invest in a pool |
 | Investor | claim  | Claim project tokens from a pool | Account must have contributed | User no longer has tokens in pool |
 |  |   |   |   |   |
-| App Admin  | approve | approve a pool | pool must comply with requirements | pool is enabled  |
+| App Admin  | approvepool | approve a pool | pool must comply with requirements | pool is enabled  |
 | App Admin  | reject | reject a pool | pool must exist | pool is rejected  |
 | App Admin  | enable | enable a pool | pool must comply with requirements | pool is ready to be funded  |
 | App Admin  | disable | disable a pool | pool must exist | pool is rejected  |
