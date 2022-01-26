@@ -32,6 +32,24 @@ ACTION tokensaleapp::addpool( name           owner,
     } );
 }
 
+ACTION tokensaleapp::approvepool( uint64_t id )
+{
+    // ask permission self account
+    require_auth( get_self() );
+
+    pool_table _pools( get_self(), get_self().value );
+    auto       _pool = _pools.find( id );
+
+    // validate that the pool exists
+    check( _pool != _pools.end(), "pool not found" );
+
+    // validate that the pool have PENDING_APPROVAL status
+    check( _pool->status == pool_status::PENDING_APPROVAL, "invalid status" );
+
+    // change the pool status
+    _pools.modify( _pool, get_self(), [&]( auto &ref ) { ref.status = pool_status::ACTIVE; } );
+}
+
 ACTION tokensaleapp::hi( name from, string message )
 {
 

@@ -51,6 +51,17 @@ CONTRACT tokensaleapp : public contract
                     uint8_t        investor_immediate_vesting,
                     uint8_t        investor_vesting_days );
 
+    /**
+     * approve pool
+     *
+     * This action allow approve a pool
+     *
+     * @param id
+     *
+     * @return no return value.
+     */
+    ACTION approvepool( uint64_t id );
+
   private:
     enum pool_status : uint8_t
     {
