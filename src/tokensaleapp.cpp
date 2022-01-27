@@ -15,7 +15,7 @@ ACTION tokensaleapp::addpool( name           owner,
     // ask permission of owner account
     require_auth( owner );
 
-    check( token_symbol == tokens_on_sale.symbol, "symbol not match" );
+    check( token_symbol == tokens_on_sale.symbol, "token symbol does not match" );
 
     // save the pool as a draft
     pool_table _pools( get_self(), get_self().value );
