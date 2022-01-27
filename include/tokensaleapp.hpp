@@ -19,7 +19,6 @@ CONTRACT tokensaleapp : public contract
   public:
     using contract::contract;
 
-    ACTION hi( name from, string message );
     ACTION clear();
 
     /**
@@ -87,6 +86,8 @@ CONTRACT tokensaleapp : public contract
         PENDING_APPROVAL = 1,
         PENDING_TOKEN_DEPOSIT = 2,
         READY_FOR_SALE = 3,
+        ACTIVE_SALE = 4,
+        COMPLETED_SALE = 5
     };
 
     TABLE pool
@@ -111,15 +112,4 @@ CONTRACT tokensaleapp : public contract
         }
     };
     typedef multi_index< name( "pools" ), pool > pool_table;
-
-    TABLE messages
-    {
-        name   user;
-        string text;
-        auto   primary_key() const
-        {
-            return user.value;
-        }
-    };
-    typedef multi_index< name( "messages" ), messages > messages_table;
 };
