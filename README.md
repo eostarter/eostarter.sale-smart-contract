@@ -20,7 +20,7 @@ These contracts are intended to support a decentralized Token Sale platform, whi
 
 The token sale platform is a decentralized application based on an open-source smart contract that any project can use to sell its tokens.
 
-The Web Application repository can be found at the [EOS Token Sale Platform GitHub Repo](https://github.com/eostarter/eostarter.sale-smart-contract)
+The Web Application repository can be found at the [EOS Token Sale Platform GitHub Repo](https://github.com/eostarter/token-sale-platform)
 
 ## Situation and Approach
 
