@@ -62,7 +62,7 @@ Users must deploy and issue their own tokens , EOStater will not have access to 
 | User Role | Action | Description | Pre-Conditions | Post-Conditions |
 |---|---|---|---|---|
 | Project Owner | addpool | create a new pool | Account must exist and be verified | pool is pending approval
-| Project Owner | deposit | deposit project tokens to pool | pool must be approved | pool can be enabled | pool is funded |
+| Project Owner | token_contract:transfer | deposit project tokens to pool | pool must be approved | pool can be enabled | pool is funded |
 | Project Owner | claimfunds  | withdraw EOS tokens from pool | pool must have funds and vesting schedule met | project is funded |
 |  |   |   |   |   |
 | Investor | subscribe | Apply to a pool | Investor must be qualified and agree to terms | User is subscribed to a pool |
