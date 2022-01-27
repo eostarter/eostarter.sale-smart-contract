@@ -19,7 +19,6 @@ CONTRACT tokensaleapp : public contract
   public:
     using contract::contract;
 
-    ACTION hi( name from, string message );
     ACTION clear();
 
     /**
@@ -44,6 +43,7 @@ CONTRACT tokensaleapp : public contract
                     name           token_contract,
                     symbol         token_symbol,
                     uint8_t        token_price,
+                    asset          tokens_on_sale,
                     time_point_sec launch_date,
                     time_point_sec end_date,
                     uint8_t        immidiate_vesting,
@@ -62,27 +62,49 @@ CONTRACT tokensaleapp : public contract
      */
     ACTION approvepool( uint64_t id );
 
+    /**
+     * On Transfer
+     *
+     * Handle deposits for pools
+     *
+     * @param from
+     * @param to
+     * @param quantity
+     * @param memo
+     *
+     * @return no return value.
+     */
+    [[eosio::on_notify( "*::transfer" )]] void ontransfer( name from, name to, asset quantity, string memo );
+
+    vector< string > get_params( string memo );
+
+    uint64_t to_uint64_t( string value );
+
   private:
     enum pool_status : uint8_t
     {
         PENDING_APPROVAL = 1,
-        ACTIVE = 2,
+        PENDING_TOKEN_DEPOSIT = 2,
+        READY_FOR_SALE = 3,
+        ACTIVE_SALE = 4,
+        COMPLETED_SALE = 5
     };
 
     TABLE pool
     {
         uint64_t       id;
         name           owner;
-        uint8_t        status;
         name           token_contract;
         symbol         token_symbol;
         uint8_t        token_price;
+        asset          tokens_on_sale;
         time_point_sec launch_date;
         time_point_sec end_date;
         uint8_t        immidiate_vesting;
         uint8_t        vesting_days;
         uint8_t        investor_immediate_vesting;
         uint8_t        investor_vesting_days;
+        uint8_t        status;
 
         auto primary_key() const
         {
@@ -90,15 +112,4 @@ CONTRACT tokensaleapp : public contract
         }
     };
     typedef multi_index< name( "pools" ), pool > pool_table;
-
-    TABLE messages
-    {
-        name   user;
-        string text;
-        auto   primary_key() const
-        {
-            return user.value;
-        }
-    };
-    typedef multi_index< name( "messages" ), messages > messages_table;
 };
