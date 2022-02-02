@@ -39,28 +39,31 @@ CONTRACT tokensaleapp : public contract
      *
      * @return no return value.
      */
-    ACTION addpool( name           owner,
-                    name           token_contract,
+    ACTION addpool( eosio::name    name,
+                    string         info,
+                    string         url,
+                    eosio::name    owner,
+                    eosio::name    token_contract,
                     symbol         token_symbol,
-                    uint8_t        token_price,
+                    float          token_price,
                     asset          tokens_on_sale,
                     time_point_sec launch_date,
                     time_point_sec end_date,
-                    uint8_t        immidiate_vesting,
-                    uint8_t        vesting_days,
-                    uint8_t        investor_immediate_vesting,
-                    uint8_t        investor_vesting_days );
+                    float          project_immidiate_vesting,
+                    uint16_t       project_vesting_days,
+                    float          investor_immediate_vesting,
+                    uint16_t       investor_vesting_days );
 
     /**
      * approve pool
      *
      * This action allow approve a pool
      *
-     * @param id
+     * @param name
      *
      * @return no return value.
      */
-    ACTION approvepool( uint64_t id );
+    ACTION approvepool( eosio::name name );
 
     /**
      * On Transfer
@@ -92,24 +95,26 @@ CONTRACT tokensaleapp : public contract
 
     TABLE pool
     {
-        uint64_t       id;
-        name           owner;
-        name           token_contract;
+        eosio::name    name;
+        string         info;
+        string         url;
+        eosio::name    owner;
+        eosio::name    token_contract;
         symbol         token_symbol;
-        uint8_t        token_price;
+        float          token_price;
         asset          tokens_on_sale;
         time_point_sec launch_date;
         time_point_sec end_date;
-        uint8_t        immidiate_vesting;
-        uint8_t        vesting_days;
-        uint8_t        investor_immediate_vesting;
-        uint8_t        investor_vesting_days;
+        float          project_immidiate_vesting;
+        uint16_t       project_vesting_days;
+        float          investor_immediate_vesting;
+        uint16_t       investor_vesting_days;
         uint8_t        status;
 
         auto primary_key() const
         {
-            return id;
+            return name.value;
         }
     };
-    typedef multi_index< name( "pools" ), pool > pool_table;
+    typedef multi_index< eosio::name( "pools" ), pool > pool_table;
 };
