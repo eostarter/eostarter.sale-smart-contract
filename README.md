@@ -61,6 +61,8 @@ Users must deploy and issue their own tokens , EOStater will not have access to 
 
 | User Role | Action | Description | Pre-Conditions | Post-Conditions |
 |---|---|---|---|---|
+| App Admin  | adduser | add a new user | user must not be registered | user is registered  |
+| App Admin  | edituser | edit an user | user must be registered  | user data is updated  |
 | Project Owner | addpool | create a new pool | Account must exist and be verified | pool is pending approval
 | Project Owner | token_contract:transfer | deposit project tokens to pool | pool must be approved | pool can be enabled | pool is funded |
 | Project Owner | claimfunds  | withdraw EOS tokens from pool | pool must have funds and vesting schedule met | project is funded |
@@ -73,8 +75,7 @@ Users must deploy and issue their own tokens , EOStater will not have access to 
 | App Admin  | reject | reject a pool | pool must exist | pool is rejected  |
 | App Admin  | enable | enable a pool | pool must comply with requirements | pool is ready to be funded  |
 | App Admin  | disable | disable a pool | pool must exist | pool is rejected  |
-| App Admin  | whitelist | add account to whitelist | account must exist and comply with requirements | user appears on whitelist  |
-| App Admin | blacklist | add account to blacklist | account must exist | user removed from whitelist |
+
 
 
 ## Smart Contract Accounts 

@@ -22,6 +22,33 @@ CONTRACT tokensaleapp : public contract
     ACTION clear();
 
     /**
+     * add user
+     *
+     * This action allow to add an user
+     *
+     * @param account
+     * @param username
+     * @param verified
+     * @param role
+     * @param referral
+     *
+     * @return no return value.
+     */
+    ACTION adduser( name account, string username, bool verified, uint8_t role, name referral );
+
+    /**
+     * edit user
+     *
+     * This action allow to edit an user
+     *
+     * @param account
+     * @param verified
+     *
+     * @return no return value.
+     */
+    ACTION edituser( name account, bool verified );
+
+    /**
      * Add pool
      *
      * This action allow add a new pool
@@ -81,8 +108,6 @@ CONTRACT tokensaleapp : public contract
 
     vector< string > get_params( string memo );
 
-    uint64_t to_uint64_t( string value );
-
   private:
     enum pool_status : uint8_t
     {
@@ -92,6 +117,27 @@ CONTRACT tokensaleapp : public contract
         ACTIVE_SALE = 4,
         COMPLETED_SALE = 5
     };
+
+    enum user_roles : uint8_t
+    {
+        PROJECT_OWNER = 1,
+        INVESTOR = 2,
+    };
+
+    TABLE user
+    {
+        name    account;
+        string  username;
+        bool    verified;
+        uint8_t role;
+        name    referral;
+
+        auto primary_key() const
+        {
+            return account.value;
+        }
+    };
+    typedef multi_index< eosio::name( "users" ), user > user_table;
 
     TABLE pool
     {

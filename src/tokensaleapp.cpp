@@ -1,5 +1,48 @@
 #include <tokensaleapp.hpp>
 
+ACTION tokensaleapp::adduser( name account, string username, bool verified, uint8_t role, name referral )
+{
+    // ask permission self account
+    require_auth( get_self() );
+
+    // check if account is registered
+    check( is_account( account ), "account is not registered" );
+    // check if referral is registered
+    check( is_account( referral ), "referral is not registered" );
+    // account and referral should be different
+    check( account != referral, "account is equal to referral" );
+    // role must be PROJECT_OWNER or INVESTOR
+    check( role == user_roles::PROJECT_OWNER || role == user_roles::INVESTOR, "invalid role" );
+
+    // check if user is already registered
+    user_table _users( get_self(), get_self().value );
+    auto       _user = _users.find( account.value );
+    check( _user == _users.end(), "user already exist" );
+
+    // add the new user
+    _users.emplace( get_self(), [&]( auto &user ) {
+        user.account = account;
+        user.username = username;
+        user.verified = verified;
+        user.role = role;
+        user.referral = referral;
+    } );
+}
+
+ACTION tokensaleapp::edituser( name account, bool verified )
+{
+    // ask permission self account
+    require_auth( get_self() );
+
+    // check if user is already registered
+    user_table _users( get_self(), get_self().value );
+    auto       _user = _users.find( account.value );
+    check( _user != _users.end(), "user not exist" );
+
+    // update the user data
+    _users.modify( _user, get_self(), [&]( auto &ref ) { ref.verified = verified; } );
+}
+
 ACTION tokensaleapp::addpool( eosio::name    name,
                               string         info,
                               string         url,
@@ -83,7 +126,7 @@ void tokensaleapp::ontransfer( name from, name to, asset quantity, string memo )
     check( params[0] == "pool" && params.size() == 2, "invalid memo" );
 
     pool_table _pools( get_self(), get_self().value );
-    auto       _pool = _pools.find( eosio::name( params[1] ).value );
+    auto       _pool = _pools.find( name( params[1] ).value );
 
     // validate that the pool exists
     check( _pool != _pools.end(), "pool not found" );
@@ -118,15 +161,6 @@ vector< string > tokensaleapp::get_params( string memo )
     }
 
     return params;
-}
-
-uint64_t tokensaleapp::to_uint64_t( string value )
-{
-    uint64_t a;
-    char    *end;
-    a = strtoull( value.c_str(), &end, 10 );
-
-    return a;
 }
 
 ACTION tokensaleapp::clear()
