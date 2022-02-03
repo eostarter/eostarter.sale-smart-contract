@@ -1,26 +1,35 @@
 #include <tokensaleapp.hpp>
 
-ACTION tokensaleapp::addpool( name           owner,
-                              name           token_contract,
+ACTION tokensaleapp::addpool( eosio::name    name,
+                              string         info,
+                              string         url,
+                              eosio::name    owner,
+                              eosio::name    token_contract,
                               symbol         token_symbol,
-                              uint8_t        token_price,
+                              float          token_price,
                               asset          tokens_on_sale,
                               time_point_sec launch_date,
                               time_point_sec end_date,
-                              uint8_t        immidiate_vesting,
-                              uint8_t        vesting_days,
-                              uint8_t        investor_immediate_vesting,
-                              uint8_t        investor_vesting_days )
+                              float          project_immidiate_vesting,
+                              uint16_t       project_vesting_days,
+                              float          investor_immediate_vesting,
+                              uint16_t       investor_vesting_days )
 {
     // ask permission of owner account
     require_auth( owner );
 
     check( token_symbol == tokens_on_sale.symbol, "token symbol does not match" );
+    // @todo: validate launch_date not to be lower than current date
+    // @todo: validate end_date not to be lower than launch_date
+    // @todo: validate info IPFS url
+    // @todo: validate url format
 
-    // save the pool as a draft
+    // save the pool as with PENDING_APPROVAL status
     pool_table _pools( get_self(), get_self().value );
     _pools.emplace( owner, [&]( auto &pool ) {
-        pool.id = _pools.available_primary_key();
+        pool.name = name;
+        pool.info = info;
+        pool.url = url;
         pool.owner = owner;
         pool.token_contract = token_contract;
         pool.token_symbol = token_symbol;
@@ -28,21 +37,21 @@ ACTION tokensaleapp::addpool( name           owner,
         pool.tokens_on_sale = tokens_on_sale;
         pool.launch_date = launch_date;
         pool.end_date = end_date;
-        pool.immidiate_vesting = immidiate_vesting;
-        pool.vesting_days = vesting_days;
+        pool.project_immidiate_vesting = project_immidiate_vesting;
+        pool.project_vesting_days = project_vesting_days;
         pool.investor_immediate_vesting = investor_immediate_vesting;
         pool.investor_vesting_days = investor_vesting_days;
         pool.status = pool_status::PENDING_APPROVAL;
     } );
 }
 
-ACTION tokensaleapp::approvepool( uint64_t id )
+ACTION tokensaleapp::approvepool( eosio::name name )
 {
     // ask permission self account
     require_auth( get_self() );
 
     pool_table _pools( get_self(), get_self().value );
-    auto       _pool = _pools.find( id );
+    auto       _pool = _pools.find( name.value );
 
     // validate that the pool exists
     check( _pool != _pools.end(), "pool not found" );
@@ -50,7 +59,7 @@ ACTION tokensaleapp::approvepool( uint64_t id )
     // validate that the pool have PENDING_APPROVAL status
     check( _pool->status == pool_status::PENDING_APPROVAL, "invalid status" );
 
-    // change the pool status
+    // change the pool status to PENDING_TOKEN_DEPOSIT
     _pools.modify( _pool, get_self(), [&]( auto &ref ) { ref.status = pool_status::PENDING_TOKEN_DEPOSIT; } );
 }
 
@@ -74,7 +83,7 @@ void tokensaleapp::ontransfer( name from, name to, asset quantity, string memo )
     check( params[0] == "pool" && params.size() == 2, "invalid memo" );
 
     pool_table _pools( get_self(), get_self().value );
-    auto       _pool = _pools.find( to_uint64_t( params[1] ) );
+    auto       _pool = _pools.find( eosio::name( params[1] ).value );
 
     // validate that the pool exists
     check( _pool != _pools.end(), "pool not found" );
