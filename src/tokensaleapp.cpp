@@ -61,14 +61,23 @@ ACTION tokensaleapp::addpool( eosio::name    name,
     // ask permission of owner account
     require_auth( owner );
 
+    // validate token symbol
     check( token_symbol == tokens_on_sale.symbol, "token symbol does not match" );
+    // check if owner is already registered and verified
+    user_table _users( get_self(), get_self().value );
+    auto       _user = _users.find( owner.value );
+    check( _user != _users.end(), "owner not registered" );
+    check( _user->verified, "owner not verified" );
+    // pool name must be unique
+    pool_table _pools( get_self(), get_self().value );
+    auto       _pool = _pools.find( name.value );
+    check( _pool == _pools.end(), "pool already exists" );
     // @todo: validate launch_date not to be lower than current date
     // @todo: validate end_date not to be lower than launch_date
     // @todo: validate info IPFS url
     // @todo: validate url format
 
     // save the pool as with PENDING_APPROVAL status
-    pool_table _pools( get_self(), get_self().value );
     _pools.emplace( owner, [&]( auto &pool ) {
         pool.name = name;
         pool.info = info;
@@ -93,10 +102,9 @@ ACTION tokensaleapp::approvepool( eosio::name name )
     // ask permission self account
     require_auth( get_self() );
 
+    // validate that the pool exists
     pool_table _pools( get_self(), get_self().value );
     auto       _pool = _pools.find( name.value );
-
-    // validate that the pool exists
     check( _pool != _pools.end(), "pool not found" );
 
     // validate that the pool have PENDING_APPROVAL status
