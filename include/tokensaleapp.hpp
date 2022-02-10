@@ -90,7 +90,40 @@ CONTRACT tokensaleapp : public contract
      *
      * @return no return value.
      */
-    ACTION approvepool( eosio::name name );
+    ACTION approvepool( name name );
+
+    /**
+     * start sale
+     *
+     * This action start the pool sale
+     *
+     * @param name
+     *
+     * @return no return value.
+     */
+    ACTION startsale( name name );
+
+    /**
+     * subscribe
+     *
+     * This action subscribe an user to the pool
+     *
+     * @param name
+     *
+     * @return no return value.
+     */
+    ACTION subscribe( name account, name pool );
+
+    /**
+     * approve subscription
+     *
+     * This action approve subscription of an user to a pool
+     *
+     * @param name
+     *
+     * @return no return value.
+     */
+    ACTION approvesubsc( name account, name pool, float max_allocation );
 
     /**
      * On Transfer
@@ -108,21 +141,40 @@ CONTRACT tokensaleapp : public contract
 
     vector< string > get_params( string memo );
 
-  private:
-    enum pool_status : uint8_t
-    {
-        PENDING_APPROVAL = 1,
-        PENDING_TOKEN_DEPOSIT = 2,
-        READY_FOR_SALE = 3,
-        ACTIVE_SALE = 4,
-        COMPLETED_SALE = 5
-    };
+    void tokendeposit( name pool, asset quantity );
 
+    void poolcontribution( name from, name pool, asset quantity );
+
+  private:
     enum user_roles : uint8_t
     {
         PROJECT_OWNER = 1,
         INVESTOR = 2,
     };
+
+    enum pool_status : uint8_t
+    {
+        POOL_PENDING_APPROVAL = 1,
+        POOL_PENDING_TOKEN_DEPOSIT = 2,
+        POOL_READY_FOR_SALE = 3,
+        POOL_ACTIVE_SALE = 4,
+        POOL_COMPLETED_SALE = 5,
+        POOL_REJECTED = 6
+    };
+
+    enum subscription_status : uint8_t
+    {
+        SUBSCRIPTION_PENDING_APPROVAL = 1,
+        SUBSCRIPTION_APPROVED = 2,
+        SUBSCRIPTION_PAID = 3,
+        SUBSCRIPTION_REJECTED = 4
+    };
+
+    // @todo: allow different token contract per pool as as buy currency
+    const name SUPPORTED_TOKEN_CONTRACT = name( "eosio.token" );
+
+    // @todo: allow different token symbol per pool as as buy currency
+    const symbol SUPPORTED_TOKEN_SYMBOL = symbol( "EOS", 4 );
 
     TABLE user
     {
@@ -137,7 +189,7 @@ CONTRACT tokensaleapp : public contract
             return account.value;
         }
     };
-    typedef multi_index< eosio::name( "users" ), user > user_table;
+    typedef multi_index< eosio::name( "user" ), user > user_table;
 
     TABLE pool
     {
@@ -162,5 +214,23 @@ CONTRACT tokensaleapp : public contract
             return name.value;
         }
     };
-    typedef multi_index< eosio::name( "pools" ), pool > pool_table;
+    typedef multi_index< eosio::name( "pool" ), pool > pool_table;
+
+    TABLE subscription
+    {
+        name           account;
+        float          max_allocation;
+        float          current_allocation;
+        asset          contribution;
+        asset          balance;
+        asset          vested_balance;
+        time_point_sec last_claim;
+        uint8_t        status;
+
+        auto primary_key() const
+        {
+            return account.value;
+        }
+    };
+    typedef multi_index< eosio::name( "subscription" ), subscription > subscription_table;
 };

@@ -63,19 +63,19 @@ Users must deploy and issue their own tokens , EOStater will not have access to 
 |---|---|---|---|---|
 | App Admin  | adduser | add a new user | user must not be registered | user is registered  |
 | App Admin  | edituser | edit an user | user must be registered  | user data is updated  |
+| App Admin  | approvepool | approve a pool | pool must comply with requirements | pool is enabled  |
+| App Admin  | rejectpool | reject a pool | pool must exist | pool is rejected  |
+| App Admin  | startsale | start the token sale for a pool | launch_date and end_date must be valid | users can apply to pool  |
+| App Admin  | approvesubsc | approve a subscription | user and pool must comply with requirements | subscription is enabled  |
+| App Admin  | rejectsubsc | reject a subscription | subscription must exist | subscription is rejected  |
+|  |   |   |   |   |
 | Project Owner | addpool | create a new pool | Account must exist and be verified | pool is pending approval
 | Project Owner | token_contract:transfer | deposit project tokens to pool | pool must be approved | pool can be enabled | pool is funded |
-| Project Owner | claimfunds  | withdraw EOS tokens from pool | pool must have funds and vesting schedule met | project is funded |
+| Project Owner | ownerclaim  | withdraw EOS tokens from pool | pool must have funds and vesting schedule met | project is funded |
 |  |   |   |   |   |
 | Investor | subscribe | Apply to a pool | Investor must be qualified and agree to terms | User is subscribed to a pool |
-| Investor | contribute  | Contribute to a pool  | Pool must exist and user is verified | User can invest in a pool |
-| Investor | claim  | Claim project tokens from a pool | Account must have contributed | User no longer has tokens in pool |
-|  |   |   |   |   |
-| App Admin  | approvepool | approve a pool | pool must comply with requirements | pool is enabled  |
-| App Admin  | reject | reject a pool | pool must exist | pool is rejected  |
-| App Admin  | enable | enable a pool | pool must comply with requirements | pool is ready to be funded  |
-| App Admin  | disable | disable a pool | pool must exist | pool is rejected  |
-
+| Investor | eosio.token:transfer  | Contribute to a pool  | Pool must exist and user is verified | User can invest in a pool |
+| Investor | investorclaim  | Claim project tokens from a pool | Account must have contributed | User no longer has tokens in pool |
 
 
 ## Smart Contract Accounts 
