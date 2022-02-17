@@ -79,9 +79,9 @@ ACTION tokensaleapp::addpool( eosio::name    name,
     auto       _pool = _pools.find( name.value );
     check( _pool == _pools.end(), "pool already exists" );
 
-    // validate pool launch_date
-    check( launch_date.sec_since_epoch() >= current_time_point().sec_since_epoch(),
-           "launch_date must be higher than current time" );
+    // validate pool launch_date @todo: enable this after testing
+    // check( launch_date.sec_since_epoch() >= current_time_point().sec_since_epoch(),
+    //        "launch_date must be higher than current time" );
 
     // validate pool end_date
     check( end_date.sec_since_epoch() >= current_time_point().sec_since_epoch(),
@@ -140,16 +140,95 @@ ACTION tokensaleapp::startsale( eosio::name name )
     // validate that the pool have READY_FOR_SALE status
     check( _pool->status == pool_status::POOL_READY_FOR_SALE, "invalid status" );
 
-    // validate pool launch_date
-    check( _pool->launch_date.sec_since_epoch() <= current_time_point().sec_since_epoch(),
-           "launch_date must be lower than current time" );
+    // validate pool launch_date @todo: enable this after testing
+    // check( _pool->launch_date.sec_since_epoch() <= current_time_point().sec_since_epoch(),
+    //        "launch_date must be lower than current time" );
 
-    // validate pool end_date
-    check( _pool->end_date.sec_since_epoch() >= current_time_point().sec_since_epoch(),
-           "end_date must be higher than current time" );
+    // validate pool end_date @todo: enable this after testing
+    // check( _pool->end_date.sec_since_epoch() >= current_time_point().sec_since_epoch(),
+    //        "end_date must be higher than current time" );
 
     // change the pool status to ACTIVE_SALE
     _pools.modify( _pool, get_self(), [&]( auto &ref ) { ref.status = pool_status::POOL_ACTIVE_SALE; } );
+}
+
+ACTION tokensaleapp::endsale( eosio::name name )
+{
+    // validate that the pool exists
+    pool_table _pools( get_self(), get_self().value );
+    auto       _pool = _pools.find( name.value );
+    check( _pool != _pools.end(), "pool not found" );
+
+    // ask permission of self account or owner account
+    check( has_auth( get_self() ) || has_auth( _pool->owner ), "missing required authorization" );
+
+    // validate that the pool have ACTIVE_SALE status
+    check( _pool->status == pool_status::POOL_ACTIVE_SALE, "invalid status" );
+
+    // validate pool end_date @todo: enable this after testing
+    // check( _pool->end_date.sec_since_epoch() <= current_time_point().sec_since_epoch(),
+    //        "end_date must be lower than current time" );
+
+    subscription_table _subscriptions( get_self(), _pool->name.value );
+    auto               _subscription = _subscriptions.begin();
+    asset              sold_tokens = asset( 0, _pool->token_symbol );
+    asset              contributions = asset( 0, SUPPORTED_TOKEN_SYMBOL );
+
+    while ( _subscription != _subscriptions.end() )
+    {
+        int64_t temp = (int64_t)( ( (float)_subscription->total_balance.amount / 10000 ) *
+                                  ( _pool->investor_immediate_vesting / 100 ) * 10000 );
+        asset   claimed_balance = asset( temp, _pool->token_symbol );
+
+        // send immediate vesting
+        action( permission_level{ get_self(), eosio::name( "active" ) },
+                eosio::name( _pool->token_contract ),
+                eosio::name( "transfer" ),
+                std::make_tuple( get_self(),
+                                 _subscription->account,
+                                 claimed_balance,
+                                 "pool " + _pool->name.to_string() + " immediate vesting" ) )
+            .send();
+
+        // update subscriptions info
+        _subscriptions.modify( _subscription, get_self(), [&]( auto &ref ) {
+            ref.remaining_balance = _subscription->total_balance - claimed_balance;
+            ref.claimed_balance = claimed_balance;
+            ref.last_claim = current_time_point();
+            ref.status = subscription_status::SUBSCRIPTION_CLAIM_IN_PROGRESS;
+        } );
+
+        sold_tokens += _subscription->total_balance;
+        contributions += _subscription->contribution;
+        _subscription++;
+    }
+
+    int64_t temp =
+        (int64_t)( ( (float)contributions.amount / 10000 ) * ( _pool->project_immidiate_vesting / 100 ) * 10000 );
+    asset claimed_balance = asset( temp, SUPPORTED_TOKEN_SYMBOL );
+
+    // send immediate vesting
+    action( permission_level{ get_self(), eosio::name( "active" ) },
+            eosio::name( SUPPORTED_TOKEN_CONTRACT ),
+            eosio::name( "transfer" ),
+            std::make_tuple( get_self(),
+                             _pool->owner,
+                             claimed_balance,
+                             "pool " + _pool->name.to_string() + " immediate vesting" ) )
+        .send();
+
+    // send back unsold tokens
+    action( permission_level{ get_self(), eosio::name( "active" ) },
+            eosio::name( _pool->token_contract ),
+            eosio::name( "transfer" ),
+            std::make_tuple( get_self(),
+                             _pool->owner,
+                             _pool->tokens_on_sale - sold_tokens,
+                             "pool " + _pool->name.to_string() + " unsold tokens" ) )
+        .send();
+
+    // change the pool status to CLAIM_IN_PROGRESS
+    _pools.modify( _pool, get_self(), [&]( auto &ref ) { ref.status = pool_status::POOL_CLAIM_IN_PROGRESS; } );
 }
 
 ACTION tokensaleapp::subscribe( name account, name pool )
@@ -175,7 +254,7 @@ ACTION tokensaleapp::subscribe( name account, name pool )
     } );
 }
 
-ACTION tokensaleapp::approvesubsc( name account, name pool, float max_allocation )
+ACTION tokensaleapp::approvesubsc( name account, name pool, asset max_allocation )
 {
     // ask permission of self account
     require_auth( get_self() );
@@ -190,6 +269,9 @@ ACTION tokensaleapp::approvesubsc( name account, name pool, float max_allocation
     subscription_table _subscriptions( get_self(), pool.value );
     auto               _subscription = _subscriptions.find( account.value );
     check( _subscription != _subscriptions.end(), "account not subscribed" );
+
+    // max_allocation must be use the same symbol defined by the pool
+    check( max_allocation.symbol == _pool->token_symbol, "invalid max_allocation symbol" );
 
     // change the pool status to APPROVED
     _subscriptions.modify( _subscription, get_self(), [&]( auto &ref ) {
@@ -289,20 +371,20 @@ void tokensaleapp::poolcontribution( name from, name pool, asset quantity )
         prev_contribution = asset( 0, SUPPORTED_TOKEN_SYMBOL );
     }
 
-    // calculate the new stats
-    asset new_contribution = prev_contribution + quantity;
-    auto  temp = (int64_t)( (float)new_contribution.amount / 10000 / _pool->token_price * 10000 );
-    asset new_balance = asset( temp, _pool->token_symbol );
-    auto  new_current_allocation = (float)new_balance.amount / (float)_pool->tokens_on_sale.amount * 100;
+    asset prev_total_balance;
 
-    // current_allocation must be lower or equal to max_allocation
-    check( new_current_allocation <= _subscription->max_allocation, "over max allocation" );
+    // calculate the new stats
+    asset   new_contribution = prev_contribution + quantity;
+    int64_t temp = (int64_t)( (float)new_contribution.amount / 10000 / _pool->token_price * 10000 );
+    asset   new_total_balance = asset( temp, _pool->token_symbol );
+
+    // total_balance must be lower or equal to max_allocation
+    check( new_total_balance <= _subscription->max_allocation, "over max allocation" );
 
     // update the subscription prev_contribution and allocation
     _subscriptions.modify( _subscription, get_self(), [&]( auto &ref ) {
         ref.contribution = new_contribution;
-        ref.balance = new_balance;
-        ref.current_allocation = new_current_allocation;
+        ref.total_balance = new_total_balance;
     } );
 }
 
