@@ -104,6 +104,17 @@ CONTRACT tokensaleapp : public contract
     ACTION startsale( name name );
 
     /**
+     * end sale
+     *
+     * This action end the pool sale
+     *
+     * @param name
+     *
+     * @return no return value.
+     */
+    ACTION endsale( name name );
+
+    /**
      * subscribe
      *
      * This action subscribe an user to the pool
@@ -123,7 +134,7 @@ CONTRACT tokensaleapp : public contract
      *
      * @return no return value.
      */
-    ACTION approvesubsc( name account, name pool, float max_allocation );
+    ACTION approvesubsc( name account, name pool, asset max_allocation );
 
     /**
      * On Transfer
@@ -158,16 +169,18 @@ CONTRACT tokensaleapp : public contract
         POOL_PENDING_TOKEN_DEPOSIT = 2,
         POOL_READY_FOR_SALE = 3,
         POOL_ACTIVE_SALE = 4,
-        POOL_COMPLETED_SALE = 5,
-        POOL_REJECTED = 6
+        POOL_CLAIM_IN_PROGRESS = 5,
+        POOL_COMPLETED_SALE = 6,
+        POOL_REJECTED = 7
     };
 
     enum subscription_status : uint8_t
     {
         SUBSCRIPTION_PENDING_APPROVAL = 1,
         SUBSCRIPTION_APPROVED = 2,
-        SUBSCRIPTION_PAID = 3,
-        SUBSCRIPTION_REJECTED = 4
+        SUBSCRIPTION_CLAIM_IN_PROGRESS = 3,
+        SUBSCRIPTION_PAID = 4,
+        SUBSCRIPTION_REJECTED = 0
     };
 
     // @todo: allow different token contract per pool as as buy currency
@@ -219,11 +232,11 @@ CONTRACT tokensaleapp : public contract
     TABLE subscription
     {
         name           account;
-        float          max_allocation;
-        float          current_allocation;
+        asset          max_allocation;
         asset          contribution;
-        asset          balance;
-        asset          vested_balance;
+        asset          total_balance;
+        asset          remaining_balance;
+        asset          claimed_balance;
         time_point_sec last_claim;
         uint8_t        status;
 
