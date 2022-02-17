@@ -7,12 +7,5 @@
     "**/.yarn": true,
     "**/.pnp.*": true
   },
-  "prettier.prettierPath": "./webapp/.yarn/sdks/prettier/index.js",
-  "files.associations": {
-    "iosfwd": "cpp",
-    "vector": "cpp",
-    "bitset": "cpp",
-    "typeindex": "cpp",
-    "typeinfo": "cpp"
-  }
+  "prettier.prettierPath": "./webapp/.yarn/sdks/prettier/index.js"
 }

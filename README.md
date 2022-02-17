@@ -66,6 +66,7 @@ Users must deploy and issue their own tokens , EOStater will not have access to 
 | App Admin  | approvepool | approve a pool | pool must comply with requirements | pool is enabled  |
 | App Admin  | rejectpool | reject a pool | pool must exist | pool is rejected  |
 | App Admin  | startsale | start the token sale for a pool | launch_date and end_date must be valid | users can apply to pool  |
+| App Admin  | endsale | end the token sale for a pool | launch_date and end_date must be valid | immediate vesting will be paid  |
 | App Admin  | approvesubsc | approve a subscription | user and pool must comply with requirements | subscription is enabled  |
 | App Admin  | rejectsubsc | reject a subscription | subscription must exist | subscription is rejected  |
 |  |   |   |   |   |
