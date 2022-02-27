@@ -93,6 +93,17 @@ CONTRACT tokensaleapp : public contract
     ACTION approvepool( name name );
 
     /**
+     * reject pool
+     *
+     * This action allow reject a pool
+     *
+     * @param name
+     *
+     * @return no return value.
+     */
+    ACTION rejectpool( name name );
+
+    /**
      * start sale
      *
      * This action start the pool sale
@@ -137,6 +148,39 @@ CONTRACT tokensaleapp : public contract
     ACTION approvesubsc( name account, name pool, asset max_allocation );
 
     /**
+     * reject subscription
+     *
+     * This action reject subscription of an user to a pool
+     *
+     * @param name
+     *
+     * @return no return value.
+     */
+    ACTION rejectsubsc( name account, name pool );
+
+    /**
+     * owner claim
+     *
+     * This action allow to the owner claim the daily vesting
+     *
+     * @param name
+     *
+     * @return no return value.
+     */
+    ACTION ownerclaim( name owner, name pool );
+
+    /**
+     * investor claim
+     *
+     * This action allow to the investor claim the daily vesting
+     *
+     * @param name
+     *
+     * @return no return value.
+     */
+    ACTION invesclaim( name investor, name pool );
+
+    /**
      * On Transfer
      *
      * Handle deposits for pools
@@ -156,6 +200,8 @@ CONTRACT tokensaleapp : public contract
 
     void poolcontribution( name from, name pool, asset quantity );
 
+    uint32_t get_days_diff( time_point_sec date1, time_point_sec date2 );
+
   private:
     enum user_roles : uint8_t
     {
@@ -171,7 +217,7 @@ CONTRACT tokensaleapp : public contract
         POOL_ACTIVE_SALE = 4,
         POOL_CLAIM_IN_PROGRESS = 5,
         POOL_COMPLETED_SALE = 6,
-        POOL_REJECTED = 7
+        POOL_REJECTED = 0
     };
 
     enum subscription_status : uint8_t
@@ -220,6 +266,10 @@ CONTRACT tokensaleapp : public contract
         uint16_t       project_vesting_days;
         float          investor_immediate_vesting;
         uint16_t       investor_vesting_days;
+        asset          total_balance;
+        asset          paid_balance;
+        asset          daily_vesting;
+        time_point_sec last_claim;
         uint8_t        status;
 
         auto primary_key() const
@@ -235,8 +285,8 @@ CONTRACT tokensaleapp : public contract
         asset          max_allocation;
         asset          contribution;
         asset          total_balance;
-        asset          remaining_balance;
-        asset          claimed_balance;
+        asset          paid_balance;
+        asset          daily_vesting;
         time_point_sec last_claim;
         uint8_t        status;
 
