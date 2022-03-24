@@ -1,10 +1,10 @@
 <p align="center">
 	<a href="https://eostarter.org">
-		<img src="./docs/img/Pomelo_Cover.PNG" width="300">
+		<img src="./docs/img/Medium_Cover.PNG" width="500">
 	</a>
 </p>
 
-# EOS Token Sale Contract
+# EOS TokenSale Contract
 
 ![](https://img.shields.io/github/license/eostarter/eostarter.sale-smart-contract) ![](https://img.shields.io/badge/code%20style-standard-brightgreen.svg) ![](https://img.shields.io/badge/%E2%9C%93-collaborative_etiquette-brightgreen.svg) ![](https://img.shields.io/twitter/follow/eostarter1.svg?style=social&logo=twitter) ![](https://img.shields.io/github/forks/eostarter/eostarter.sale-smart-contract?style=social)
 
@@ -109,4 +109,5 @@ Please report bugs big and small by [opening an issue](https://github.com/eostar
 <br/>
 
 EOSTARTER is a Community-powered Incubator and Gamified Launchpad for EOSIO projects.
+
 Visit us at: [eostarter.org](https://eostarter.org/)
