@@ -1,6 +1,6 @@
 <p align="center">
 	<a href="https://eostarter.org">
-		<img src="./docs/img/Pomelo_Cover.PNG" width="500">
+		<img src="./docs/img/Pomelo_Cover.PNG" width="300">
 	</a>
 </p>
 
@@ -101,13 +101,12 @@ Please report bugs big and small by [opening an issue](https://github.com/eostar
 
 # About EOSTARTER
 
-<p align="center">
+<p align="left">
 	<a href="https://eostarter.org">
 		<img src="./docs/img/eostarter_Rectangle.png" width="300">
 	</a>
 </p>
 <br/>
 
-EOStarter is a Community-powered Incubator and Gamified Launchpad for EOS projects.
-
-[eostarter.org](https://eostarter.org/)
+EOSTARTER is a Community-powered Incubator and Gamified Launchpad for EOSIO projects.
+Visit us at: [eostarter.org](https://eostarter.org/)
