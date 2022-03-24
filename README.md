@@ -99,11 +99,11 @@ Please Read EOS Costa Rica's [Open Source Contributing Guidelines](https://devel
 
 Please report bugs big and small by [opening an issue](https://github.com/eostarter/eostarter.sale-smart-contract/issues)
 
-# About EOSstarter
+# About EOSTARTER
 
 <p align="center">
 	<a href="https://eostarter.org">
-		<img src="./docs/img/logo-words.png" width="300">
+		<img src="./docs/img/eostarter_Rectangle.png" width="300">
 	</a>
 </p>
 <br/>
