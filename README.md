@@ -1,6 +1,6 @@
 <p align="center">
 	<a href="https://eostarter.org">
-		<img src="./docs/img/logo-words.png" width="300">
+		<img src="./docs/img/Pomelo_Cover.PNG" width="500">
 	</a>
 </p>
 
