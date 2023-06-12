@@ -8,7 +8,7 @@
 
 ![](https://img.shields.io/github/license/eostarter/eostarter.sale-smart-contract) ![](https://img.shields.io/badge/code%20style-standard-brightgreen.svg) ![](https://img.shields.io/badge/%E2%9C%93-collaborative_etiquette-brightgreen.svg) ![](https://img.shields.io/twitter/follow/eostarter1.svg?style=social&logo=twitter) ![](https://img.shields.io/github/forks/eostarter/eostarter.sale-smart-contract?style=social)
 
-EOStarter is developing a Token Sale Smart Contract system that allows for the crowd-sourcing of projects through a token sale that can be configured with different parameters like staking capabilities, whitelisting requirements, token vesting, etc.
+EOSTARTER is developing a Token Sale Smart Contract system that allows for the crowd-sourcing of projects through a token sale that can be configured with different parameters like staking capabilities, whitelisting requirements, token vesting, etc.
 
 You can read about the initial specs of the Smart Contract here:
 
